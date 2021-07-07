@@ -1,0 +1,14 @@
+steps:
+- name: golang
+  entrypoint: /bin/bash
+  args: 
+    - -c
+    - |
+      go get -u github.com/jstemmer/go-junit-report
+      2>&1 go test -timeout 1m -v ./... | tee sponge.log
+      /go/bin/go-junit-report -set-exit-code < sponge.log > ${SHORT_SHA}_test_log.xml
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/books:$SHORT_SHA', '.' ]
+  timeout: 600s
+images:
+- 'gcr.io/$PROJECT_ID/books:$SHORT_SHA'
