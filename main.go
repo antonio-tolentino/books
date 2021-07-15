@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
@@ -31,6 +32,11 @@ type Status struct {
 	Status string `json:"status"`
 }
 
+// Status struct
+type OutBoundAddress struct {
+	IP string `json:"ip"`
+}
+
 //Init books var as a slice Book Struct
 var books []Book
 
@@ -49,9 +55,35 @@ const APIBooks = "/api/books"
 //APIHealth path
 const APIHealth = "/api/health"
 
+//OutBoundIP path
+const OutBoundIP = "/api/outboundip"
+
 // Custom response header
 const myResponse = "myResponse"
 const myResponseMsg = "Hello"
+
+// Show OutBoundIP
+func outBoundIP(w http.ResponseWriter, r *http.Request) {
+
+	resp, err := http.Get("https://ifconfig.me/ip")
+	if err != nil {
+		log.Fatalln("Error making GET: ", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln("Error reading body: ", err)
+	}
+
+	log.Printf("Output ip = %s", string(body))
+
+	w.Header().Set(ContentType, ApplicationJSON)
+	w.Header().Add(myResponse, myResponseMsg)
+	var address OutBoundAddress
+	address.IP = string(body)
+	json.NewEncoder(w).Encode(address)
+}
 
 // Show API Health
 func health(w http.ResponseWriter, r *http.Request) {
@@ -249,6 +281,7 @@ func createRouter() (router *mux.Router) {
 
 	// Route Handlers / Endpoints
 	r.HandleFunc(APIHealth, health).Methods("GET")
+	r.HandleFunc(OutBoundIP, outBoundIP).Methods("GET")
 	r.HandleFunc(APIBooks, getBooks).Methods("GET")
 	r.HandleFunc(APIBooksID, getBook).Methods("GET")
 	r.HandleFunc(APIBooks, createBook).Methods("POST")
