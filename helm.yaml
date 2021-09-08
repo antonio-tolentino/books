@@ -152,6 +152,22 @@ podEnvironment: []
 
 
 
+## Linkedsecrets
+linkedsecrets:
+  enabled: false
+  name: myapp-linkedsecrets
+  provider: Azure # (GCP | AWS | Azure | IBM)
+  providerDataFormat: JSON # (JSON | PLAIN)
+  ## providerOptions fields depend on what provider you have chosen.
+  ## Please check https://kubeideas.github.io/linkedsecrets/#cloud-provider-specific-instructions for details.
+  providerOptions: 
+    keyvault: linkedsecret
+    secret: opaque-secret-json
+  secretName: myapp-kubernetes-secret
+  schedule: "\"@every 10m\""
+
+
+
 nodeSelector: {}
 
 tolerations: []
