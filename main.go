@@ -296,7 +296,6 @@ func main() {
 	mockData()
 
 	// Start server
-	log.Println("Change codee")
 	log.Println("Starting server at port :8080")
 	log.Fatal(http.ListenAndServe(":8080", createRouter()))
 }
