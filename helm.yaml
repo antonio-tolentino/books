@@ -9,45 +9,15 @@ service:
   type: ClusterIP
   port: 80
 
-## NGINX Ingress controller
-ingress:
-  enabled: false
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    # cert-manager.io/issuer: "nameOfIssuer"
-    # cert-manager.io/cluster-issuer: "nameOfClusterIssuer"
-  hosts: []
-    #- host: chart-example.local
-    #  paths: 
-    #    - /     
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
 
 ## istio service mesh
 istio:
-  enabled: false
+  enabled: true
   dnsNames: 
-    - chart-example.local
-  tls: 
-    enabled: false
-    ## localCert = true secret with certificate and private key must be defined in credentialName
-    ## localCert = false certificate and private key is expected to be attached to Load Balancer
-    localCert: true
-    credentialName: mydomain-tls
-  certManager:
-    enabled: false
-    issuer:
-      name: letsencrypt-prod
-      kind: ClusterIssuer
-  gateway:
-    enabled: false
-    httpsRedirect: false
-    http: false
+    - books.localdomain
   virtualservice:
-    gateways: []
-      #- istio-system/my-gateway-example
+    gateways: 
+      - istio-system/default-gw
     paths: 
       - /
     
