@@ -5,36 +5,6 @@
 
 replicaCount: 1
 
-image:
-  repository: "tolentino/books"
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.1.0"
-
-imagePullSecrets: []
-
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: true
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ""
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
 service:
   type: ClusterIP
   port: 80
@@ -82,14 +52,13 @@ istio:
       - /
     
 
-resources: {}
-  #uncomment the following lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  #limits:
-  #  cpu: 100m
-  #  memory: 128Mi
-  #requests:
-  #  cpu: 100m
-  #  memory: 128Mi
+resources: 
+  limits:
+    cpu: 100m
+    memory: 100Mi
+  requests:
+    cpu: 10m
+    memory: 10Mi
 
 containerPort: 8080
 
@@ -126,53 +95,7 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 
-## Application configmap
-configMap:
-  enabled: false
-  name: configmap-example
-  keys: 
-   logFile: /tmp/output.log
-   logSize: 10m
 
-## Application environment variables
-podEnvironment: []
-#podEnvironment:
-#  - name: LOG_LEVEL
-#    value: "INFO"
-#  - name: LOG_FILE
-#    valueFrom:
-#      configMapKeyRef:
-#        key: logFile
-#        name: configmap-example
-#  - name: DB_HOST
-#    valueFrom:
-#      secretKeyRef:
-#        key: host
-#        name: secret-example
-
-
-
-## Linkedsecrets
-linkedsecrets:
-  enabled: false
-  name: myapp-linkedsecrets
-  provider: Azure # (GCP | AWS | Azure | IBM)
-  providerDataFormat: JSON # (JSON | PLAIN)
-  ## providerOptions fields depend on what provider you have chosen.
-  ## Please check https://kubeideas.github.io/linkedsecrets/#cloud-provider-specific-instructions for details.
-  providerOptions: 
-    keyvault: linkedsecret
-    secret: opaque-secret-json
-  secretName: myapp-kubernetes-secret
-  schedule: "\"@every 10m\""
-
-
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
 
 
 
