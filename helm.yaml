@@ -17,7 +17,7 @@ istio:
     - books.localdomain
   virtualservice:
     gateways: 
-      - istio-system/default-gw
+      - istio-system/localdomain
     paths: 
       - /
     
