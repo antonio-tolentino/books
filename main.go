@@ -11,6 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // Book struct (Model)
@@ -25,6 +26,11 @@ type Book struct {
 type Author struct {
 	Firstname string `json:"firstname"`
 	Lastname  string `json:"lastname"`
+}
+
+// Status struct
+type Home struct {
+	Msg string `json:"msg"`
 }
 
 // Status struct
@@ -46,6 +52,9 @@ const ContentType = "Content-Type"
 // ApplicationJSON header
 const ApplicationJSON = "application/json"
 
+// APIHome path
+const APIHome = "/"
+
 // APIBooksID path
 const APIBooksID = "/api/books/{id}"
 
@@ -57,6 +66,9 @@ const APIHealth = "/api/health"
 
 //OutBoundIP path
 const OutBoundIP = "/api/outboundip"
+
+//Metrics path
+const Metrics = "/metrics"
 
 // Custom response header
 const myResponse = "myResponse"
@@ -83,6 +95,14 @@ func outBoundIP(w http.ResponseWriter, r *http.Request) {
 	var address OutBoundAddress
 	address.IP = string(body)
 	json.NewEncoder(w).Encode(address)
+}
+
+// Home path redirect to health
+func home(w http.ResponseWriter, r *http.Request) {
+
+	var home Home
+	home.Msg = "This is books api"
+	json.NewEncoder(w).Encode(home)
 }
 
 // Show API Health
@@ -280,6 +300,7 @@ func createRouter() (router *mux.Router) {
 	r := mux.NewRouter()
 
 	// Route Handlers / Endpoints
+	r.HandleFunc(APIHome, home).Methods("GET")
 	r.HandleFunc(APIHealth, health).Methods("GET")
 	r.HandleFunc(OutBoundIP, outBoundIP).Methods("GET")
 	r.HandleFunc(APIBooks, getBooks).Methods("GET")
@@ -287,6 +308,7 @@ func createRouter() (router *mux.Router) {
 	r.HandleFunc(APIBooks, createBook).Methods("POST")
 	r.HandleFunc(APIBooksID, updateBook).Methods("PUT")
 	r.HandleFunc(APIBooksID, deleteBook).Methods("DELETE")
+	r.Path(Metrics).Handler(promhttp.Handler()).Methods("GET")
 
 	return r
 }
