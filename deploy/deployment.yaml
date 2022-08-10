@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: books
+  namespace: default   
+  labels:
+    app: books
+    version: v1.1.0  
+spec:
+  selector:
+    matchLabels:
+      app: books
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+      labels:
+        app: books
+        version: v1.1.0
+    spec:
+      containers:
+      - name: books
+        image: "tolentino/books:v1.1.0"
+        imagePullPolicy: Always
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
