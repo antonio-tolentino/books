@@ -3,7 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
+
 	"log"
 	"math/rand"
 	"net/http"
@@ -37,7 +38,7 @@ type OutBoundAddress struct {
 	IP string `json:"ip"`
 }
 
-//Init books var as a slice Book Struct
+// Init books var as a slice Book Struct
 var books []Book
 
 // ContentType header
@@ -49,13 +50,13 @@ const ApplicationJSON = "application/json"
 // APIBooksID path
 const APIBooksID = "/api/books/{id}"
 
-//APIBooks path
+// APIBooks path
 const APIBooks = "/api/books"
 
-//APIHealth path
+// APIHealth path
 const APIHealth = "/api/health"
 
-//OutBoundIP path
+// OutBoundIP path
 const OutBoundIP = "/api/outboundip"
 
 // Custom response header
@@ -71,7 +72,7 @@ func outBoundIP(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln("Error reading body: ", err)
 	}
