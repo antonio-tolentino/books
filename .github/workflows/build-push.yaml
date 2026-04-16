@@ -30,7 +30,9 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: .
+          file: Dockerfile
           push: true
+          platforms: linux/amd64
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/books:latest
             ${{ secrets.DOCKER_USERNAME }}/books:${{ steps.meta.outputs.SHORT_SHA }}
