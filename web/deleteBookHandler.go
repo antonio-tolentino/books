@@ -29,7 +29,7 @@ func (s *StorageHandler) deleteBookHandler(w http.ResponseWriter, r *http.Reques
 	err = s.Storage.Delete(ctx, isbn)
 	if err != nil {
 		log.Printf("Book not deleted: %v - isbn: %d\n", err, isbn)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 

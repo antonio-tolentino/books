@@ -1,0 +1,478 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>models: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">books/models/books.go (100.0%)</option>
+				
+				<option value="file1">books/storage/booksMemory.go (100.0%)</option>
+				
+				<option value="file2">books/storage/mock_books.go (100.0%)</option>
+				
+				<option value="file3">books/web/booksStorageHandler.go (100.0%)</option>
+				
+				<option value="file4">books/web/deleteBookHandler.go (100.0%)</option>
+				
+				<option value="file5">books/web/healthCheckHandler.go (100.0%)</option>
+				
+				<option value="file6">books/web/homeHandler.go (100.0%)</option>
+				
+				<option value="file7">books/web/listAllBooksHandler.go (100.0%)</option>
+				
+				<option value="file8">books/web/listBookHandler.go (100.0%)</option>
+				
+				<option value="file9">books/web/saveBookHandler.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package models
+
+// Author
+type Author struct {
+        Firstname string `json:"firstname"`
+        Lastname  string `json:"lastname"`
+}
+
+// Book
+type Book struct {
+        Isbn   int     `json:"isbn"`
+        Title  string  `json:"title"`
+        Author *Author `json:"author"`
+}
+
+func (b Book) String() string <span class="cov8" title="1">{
+        return b.Title + " by " + b.Author.Firstname
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package storage
+
+import (
+        "books/models"
+        "context"
+        "errors"
+        "log"
+        "sync"
+)
+
+// custom book errors
+var (
+        ErrBookNotFound      = errors.New("Book isbn not found")
+        ErrAllFieldsRequired = errors.New("All fields are required")
+)
+
+// BooksMemoryStorage
+type BooksMemoryStorage struct {
+        mu   sync.RWMutex // Protects the map from concurrent access
+        data map[int]models.Book
+}
+
+// NewBooksMemoryStorage returns a new in-memory storage
+func NewBooksMemoryStorage() *BooksMemoryStorage <span class="cov8" title="1">{
+
+        // make a new map and call mockData
+        books := mockData()
+        log.Println("Books memory storage initialized...")
+
+        return &amp;BooksMemoryStorage{
+                data: books,
+        }
+}</span>
+
+// implement GetByIsbn
+func (bs *BooksMemoryStorage) GetByIsbn(ctx context.Context, isbn int) (models.Book, error) <span class="cov8" title="1">{
+        bs.mu.RLock()
+        defer bs.mu.RUnlock()
+
+        book, ok := bs.data[isbn]
+        if !ok </span><span class="cov8" title="1">{
+                return models.Book{}, ErrBookNotFound
+        }</span>
+        <span class="cov8" title="1">return book, nil</span>
+}
+
+// implement GetAll
+func (bs *BooksMemoryStorage) GetAll(ctx context.Context) []models.Book <span class="cov8" title="1">{
+        bs.mu.RLock()
+        defer bs.mu.RUnlock()
+        books := make([]models.Book, 0, len(bs.data))
+        for _, v := range bs.data </span><span class="cov8" title="1">{
+                books = append(books, v)
+        }</span>
+
+        <span class="cov8" title="1">return books</span>
+}
+
+// implement Save
+func (bs *BooksMemoryStorage) Save(ctx context.Context, book models.Book) error <span class="cov8" title="1">{
+        bs.mu.Lock()
+        defer bs.mu.Unlock()
+        if book.Title == "" || book.Author.Firstname == "" || book.Author.Lastname == "" </span><span class="cov8" title="1">{
+                return ErrAllFieldsRequired
+        }</span>
+        <span class="cov8" title="1">bs.data[book.Isbn] = book
+        return nil</span>
+}
+
+// implement Delete
+func (bs *BooksMemoryStorage) Delete(ctx context.Context, isbn int) error <span class="cov8" title="1">{
+        bs.mu.Lock()
+        defer bs.mu.Unlock()
+
+        // check if book exists
+        _, ok := bs.data[isbn]
+        if ok </span><span class="cov8" title="1">{
+                delete(bs.data, isbn)
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">return ErrBookNotFound</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package storage
+
+import (
+        "books/models"
+        "log"
+)
+
+// Mock examples of books
+func mockData() map[int]models.Book <span class="cov8" title="1">{
+
+        log.Println("Mocking data...")
+
+        books := make(map[int]models.Book)
+
+        books[448743] = models.Book{Isbn: 448743,
+                Title:  "Book One",
+                Author: &amp;models.Author{Firstname: "Agatha", Lastname: "Black"}}
+
+        books[556798] = models.Book{Isbn: 556798,
+                Title:  "Book Two",
+                Author: &amp;models.Author{Firstname: "Steve", Lastname: "White"}}
+
+        books[123456] = models.Book{Isbn: 123456,
+                Title:  "Book Three",
+                Author: &amp;models.Author{Firstname: "John", Lastname: "Doe"}}
+
+        books[987654] = models.Book{Isbn: 987654,
+                Title:  "Book Four",
+                Author: &amp;models.Author{Firstname: "Jane", Lastname: "Doe"}}
+
+        return books
+
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package web
+
+import (
+        "books/storage"
+
+        "github.com/gorilla/mux"
+)
+
+type StorageHandler struct {
+        Storage storage.BooksRepository
+}
+
+func NewStorageHandler(storage storage.BooksRepository) *StorageHandler <span class="cov8" title="1">{
+        return &amp;StorageHandler{
+                Storage: storage,
+        }
+}</span>
+
+func (s *StorageHandler) RegisterRoutes() *mux.Router <span class="cov8" title="1">{
+        r := mux.NewRouter()
+        r.HandleFunc("/", homeHandler).Methods("GET")
+        r.HandleFunc("/api/health", healthHandler).Name("helth-check").Methods("GET")
+        r.HandleFunc("/api/books", s.listAllBooksHandler).Methods("GET")
+        r.HandleFunc("/api/book/{isbn}", s.listBookHandler).Methods("GET")
+        r.HandleFunc("/api/book", s.saveBookHandler).Methods("PUT")
+        r.HandleFunc("/api/book/{isbn}", s.deleteBookHandler).Methods("DELETE")
+        return r
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package web
+
+import (
+        "context"
+        "log"
+        "net/http"
+        "strconv"
+        "time"
+
+        "github.com/gorilla/mux"
+)
+
+func (s *StorageHandler) deleteBookHandler(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+
+        ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+        defer cancel()
+
+        // get isbn from url
+        isbnString := mux.Vars(r)["isbn"]
+
+        // convert to int
+        isbn, err := strconv.Atoi(isbnString)
+        if err != nil </span><span class="cov8" title="1">{
+                log.Printf("Book isbn is not valid: %v\n", err)
+                w.WriteHeader(http.StatusNotFound)
+                return
+        }</span>
+
+        <span class="cov8" title="1">err = s.Storage.Delete(ctx, isbn)
+        if err != nil </span><span class="cov8" title="1">{
+                log.Printf("Book not deleted: %v - isbn: %d\n", err, isbn)
+                w.WriteHeader(http.StatusNotFound)
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.WriteHeader(http.StatusNoContent)</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package web
+
+import (
+        "encoding/json"
+        "log"
+        "net/http"
+)
+
+type Health struct {
+        Name   string `json:"name"`
+        Status string `json:"status"`
+}
+
+func healthHandler(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+
+        w.Header().Set("Content-Type", "application/json")
+
+        log.Println("")
+
+        health := Health{
+                Name:   "Books API",
+                Status: "UP",
+        }
+
+        json.NewEncoder(w).Encode(health)
+}</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package web
+
+import (
+        "encoding/json"
+        "net/http"
+)
+
+// Home Handler
+func homeHandler(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+
+        w.Header().Set("Content-Type", "application/json")
+
+        json.NewEncoder(w).Encode("Books API")
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package web
+
+import (
+        "context"
+        "encoding/json"
+        "net/http"
+        "time"
+)
+
+// Get all books
+func (s *StorageHandler) listAllBooksHandler(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+
+        ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+        defer cancel()
+
+        // get all books
+        books := s.Storage.GetAll(ctx)
+
+        w.Header().Set("Content-Type", "application/json")
+
+        json.NewEncoder(w).Encode(books)
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package web
+
+import (
+        "context"
+        "encoding/json"
+        "log"
+        "net/http"
+        "strconv"
+        "time"
+
+        "github.com/gorilla/mux"
+)
+
+// List Book Handler
+func (s *StorageHandler) listBookHandler(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+
+        ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+        defer cancel()
+
+        // get isbn from url
+        isbnString := mux.Vars(r)["isbn"]
+
+        // convert to int
+        isbn, err := strconv.Atoi(isbnString)
+        if err != nil </span><span class="cov8" title="1">{
+                log.Printf("Book not found: %v\n", err)
+                w.WriteHeader(http.StatusNotFound)
+                return
+        }</span>
+
+        // get book
+        <span class="cov8" title="1">book, err := s.Storage.GetByIsbn(ctx, isbn)
+        if err != nil </span><span class="cov8" title="1">{
+                log.Printf("Book not found: %v\n", err)
+                w.WriteHeader(http.StatusNotFound)
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+
+        json.NewEncoder(w).Encode(book)</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package web
+
+import (
+        "books/models"
+        "context"
+        "encoding/json"
+        "errors"
+        "log"
+        "net/http"
+        "time"
+)
+
+func (s *StorageHandler) saveBookHandler(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+
+        ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+        defer cancel()
+
+        var book models.Book
+        _ = json.NewDecoder(r.Body).Decode(&amp;book)
+
+        // check if isbn was converted correctly
+        if book.Isbn &lt; 100000 </span><span class="cov8" title="1">{
+                log.Printf("Book not saved: %v - [ %d ]\n", errors.New("Valid isbn is required."), book.Isbn)
+                w.WriteHeader(http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov8" title="1">err := s.Storage.Save(ctx, book)
+        if err != nil </span><span class="cov8" title="1">{
+                log.Printf("Book not saved: %v - isbn: %d\n", err, book.Isbn)
+                w.WriteHeader(http.StatusInternalServerError)
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.WriteHeader(http.StatusNoContent)</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

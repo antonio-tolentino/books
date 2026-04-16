@@ -10,7 +10,8 @@ import (
 
 // custom book errors
 var (
-	ErrBookNotFound = errors.New("Book isbn not found")
+	ErrBookNotFound      = errors.New("Book isbn not found")
+	ErrAllFieldsRequired = errors.New("All fields are required")
 )
 
 // BooksMemoryStorage
@@ -59,6 +60,9 @@ func (bs *BooksMemoryStorage) GetAll(ctx context.Context) []models.Book {
 func (bs *BooksMemoryStorage) Save(ctx context.Context, book models.Book) error {
 	bs.mu.Lock()
 	defer bs.mu.Unlock()
+	if book.Title == "" || book.Author.Firstname == "" || book.Author.Lastname == "" {
+		return ErrAllFieldsRequired
+	}
 	bs.data[book.Isbn] = book
 	return nil
 }
