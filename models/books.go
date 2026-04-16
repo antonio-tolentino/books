@@ -13,6 +13,6 @@ type Book struct {
 	Author *Author `json:"author"`
 }
 
-func (B Book) String() string {
-	return B.Title + " by " + B.Author.Firstname
+func (b Book) String() string {
+	return b.Title + " by " + b.Author.Firstname
 }
