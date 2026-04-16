@@ -1,5 +1,5 @@
 # Build the books binary
-FROM golang:1.25 as builder
+FROM golang:1.25 AS builder
 
 WORKDIR /workspace
 # Copy the Go Modules manifests
