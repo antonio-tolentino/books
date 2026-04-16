@@ -10,6 +10,9 @@ COPY go.sum go.sum
 RUN go mod download
 
 # Copy the go source
+COPY models/ models/
+COPY storage/ storage/
+COPY web/ web/
 COPY main.go main.go
 
 
