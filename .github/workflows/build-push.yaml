@@ -26,7 +26,7 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=antonio-tolentino
-            -Dsonar.organization=antonio-tolentino
+            -Dsonar.organization=Antonio-Tolentino
             -Dsonar.qualitygate.wait=true
 
       - name: Extract metadata
