@@ -3,7 +3,7 @@ package web
 import (
 	"context"
 	"encoding/json"
-	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"time"
@@ -23,7 +23,7 @@ func (s *StorageHandler) listBookHandler(w http.ResponseWriter, r *http.Request)
 	// convert to int
 	isbn, err := strconv.Atoi(isbnString)
 	if err != nil {
-		log.Printf("Book not found: %v\n", err)
+		slog.Warn("Book not found", "error", err)
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -31,7 +31,7 @@ func (s *StorageHandler) listBookHandler(w http.ResponseWriter, r *http.Request)
 	// get book
 	book, err := s.Storage.GetByIsbn(ctx, isbn)
 	if err != nil {
-		log.Printf("Book not found: %v\n", err)
+		slog.Warn("Book not found", "error", err)
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}

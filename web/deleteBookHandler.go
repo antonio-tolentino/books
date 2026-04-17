@@ -2,7 +2,7 @@ package web
 
 import (
 	"context"
-	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"time"
@@ -21,14 +21,14 @@ func (s *StorageHandler) deleteBookHandler(w http.ResponseWriter, r *http.Reques
 	// convert to int
 	isbn, err := strconv.Atoi(isbnString)
 	if err != nil {
-		log.Printf("Book isbn is not valid: %v\n", err)
+		slog.Warn("Book isbn is not valid", "error", err)
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	err = s.Storage.Delete(ctx, isbn)
 	if err != nil {
-		log.Printf("Book not deleted: %v - isbn: %d\n", err, isbn)
+		slog.Warn("Book not deleted", "isbn", isbn, "error", err)
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}

@@ -4,7 +4,7 @@ import (
 	"books/models"
 	"context"
 	"errors"
-	"log"
+	"log/slog"
 	"sync"
 )
 
@@ -25,7 +25,7 @@ func NewBooksMemoryStorage() *BooksMemoryStorage {
 
 	// make a new map and call mockData
 	books := mockData()
-	log.Println("Books memory storage initialized...")
+	slog.Info("Books memory storage initialized...")
 
 	return &BooksMemoryStorage{
 		data: books,

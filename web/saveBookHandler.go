@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"log"
+	"log/slog"
 	"net/http"
 	"time"
 )
@@ -20,14 +20,14 @@ func (s *StorageHandler) saveBookHandler(w http.ResponseWriter, r *http.Request)
 
 	// check if isbn was converted correctly
 	if book.Isbn < 100000 {
-		log.Printf("Book not saved: %v - [ %d ]\n", errors.New("Valid isbn is required."), book.Isbn)
+		slog.Warn("Book not saved", "error", errors.New("Valid isbn is required."), "isbn", book.Isbn)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	err := s.Storage.Save(ctx, book)
 	if err != nil {
-		log.Printf("Book not saved: %v - isbn: %d\n", err, book.Isbn)
+		slog.Warn("Book not saved", "error", err, "isbn", book.Isbn)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

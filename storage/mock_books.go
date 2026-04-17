@@ -2,13 +2,13 @@ package storage
 
 import (
 	"books/models"
-	"log"
+	"log/slog"
 )
 
 // Mock examples of books
 func mockData() map[int]models.Book {
 
-	log.Println("Mocking data...")
+	slog.Info("Mocking data...")
 
 	books := make(map[int]models.Book)
 

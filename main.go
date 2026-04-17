@@ -3,13 +3,16 @@ package main
 import (
 	"books/storage"
 	"books/web"
-	"fmt"
-
-	"log"
+	"log/slog"
 	"net/http"
+	"os"
 )
 
 func main() {
+
+	// Init Logger
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
 
 	// Init Storage
 	booksRepo := storage.NewBooksMemoryStorage()
@@ -17,6 +20,11 @@ func main() {
 	// Init Web Server
 	s := web.NewStorageHandler(booksRepo)
 	r := s.RegisterRoutes()
-	fmt.Println("Server running at http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", r))
+
+	slog.Info("Server running at http://localhost:8080")
+
+	// Start Server using slog
+	if err := http.ListenAndServe(":8080", r); err != nil {
+		slog.Error(err.Error())
+	}
 }
