@@ -19,15 +19,10 @@ jobs:
           # Disabling shallow clones is recommended for improving the relevancy of reporting
           fetch-depth: 0
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v7
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=antonio-tolentino_books
-            -Dsonar.organization=antonio-tolentino
-            -Dsonar.qualitygate.wait=true
 
       - name: Extract metadata
         id: meta
