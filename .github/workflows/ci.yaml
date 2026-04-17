@@ -26,7 +26,9 @@ jobs:
           cache: true
 
       - name: Run tests
-        run: go test -v -coverprofile=coverage.out ./...
+        run: |
+          go test -v -coverprofile=coverage.out ./...
+          go test -v -json ./... > report.json
 
 
       - name: SonarQube Scan
