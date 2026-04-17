@@ -9,8 +9,8 @@ on:
       - 'hotfix/*'
 
 jobs:
-  sonarqube:
-    name: SonarCloud Scan
+  code-tests:
+    name: Code Tests and SonarQube Scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -26,6 +26,7 @@ jobs:
 
 
   build-and-push:
+    name: Build and Push Image
     runs-on: ubuntu-latest
     needs: sonarqube
     steps:
