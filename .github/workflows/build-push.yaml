@@ -27,18 +27,7 @@ jobs:
           args: >
             -Dsonar.projectKey=antonio-tolentino
             -Dsonar.organization=antonio-tolentino
-
-      - name: SonarQube Quality Gate check
-        id: sonarqube-quality-gate-check
-        uses: sonarsource/sonarqube-quality-gate-action@v1.2.0
-        with:
-          pollingTimeoutSec: 600
-          args: >
-            -Dsonar.projectKey=antonio-tolentino
-            -Dsonar.organization=antonio-tolentino
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
+            -Dsonar.qualitygate.wait=true
 
       - name: Extract metadata
         id: meta
