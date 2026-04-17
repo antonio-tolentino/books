@@ -23,10 +23,10 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v7
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=antonio-tolentino
-            -Dsonar.organization=antonio-tolentino
+        #with:
+        #  args: >
+        #    -Dsonar.projectKey=antonio-tolentino
+        #    -Dsonar.organization=antonio-tolentino
 
       - name: SonarQube Quality Gate check
         id: sonarqube-quality-gate-check
