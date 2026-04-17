@@ -8,6 +8,9 @@ import (
 	"os"
 )
 
+// main is the entry point of the books API.
+// It initializes the logger, storage and web server.
+// It then starts the web server using slog.
 func main() {
 
 	// Init Logger
