@@ -26,7 +26,7 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=antonio-tolentino
-            -Dsonar.organization="Antonio Tolentino"
+            -Dsonar.organization=Antonio-Tolentino
 
       - name: SonarQube Quality Gate check
         id: sonarqube-quality-gate-check
