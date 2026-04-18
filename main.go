@@ -3,6 +3,7 @@ package main
 import (
 	"books/storage"
 	"books/web"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -12,6 +13,11 @@ import (
 // It initializes the logger, storage and web server.
 // It then starts the web server using slog.
 func main() {
+
+	// BUG: unreachable code
+	if false {
+		fmt.Println("This is unreachable")
+	}
 
 	// Init Logger
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
