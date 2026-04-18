@@ -34,10 +34,6 @@ func triggerDuplicationB() {
 // It then starts the web server using slog.
 func main() {
 
-	// FAILURE 1: Security Hotspot - Hardcoded password/secret
-	dbPassword := "super_secret_password_123"
-	fmt.Println("Connecting to DB with:", dbPassword)
-
 	// Init Logger
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
@@ -52,7 +48,12 @@ func main() {
 	slog.Info("Server running at http://localhost:8080")
 
 	// Start Server using slog
-	if err := http.ListenAndServe(":8080", r); err != nil {
-		slog.Error(err.Error())
-	}
+	//if err := http.ListenAndServe(":8080", r); err != nil {
+	//	slog.Error(err.Error())
+	//}
+
+	http.ListenAndServe(":8080", r)
+
+	triggerDuplicationA()
+	triggerDuplicationB()
 }
