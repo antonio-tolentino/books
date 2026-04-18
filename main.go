@@ -14,14 +14,9 @@ import (
 // It then starts the web server using slog.
 func main() {
 
-	x := 10
-	if x > 5 {
-		if x > 6 {
-			if x > 7 {
-				fmt.Println("High complexity")
-			}
-		}
-	}
+	// FAILURE 1: Security Hotspot - Hardcoded password/secret
+	dbPassword := "super_secret_password_123"
+	fmt.Println("Connecting to DB with:", dbPassword)
 
 	// Init Logger
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
