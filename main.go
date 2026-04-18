@@ -32,9 +32,3 @@ func main() {
 	}
 
 }
-
-func deleteFile(path string) {
-	// CRITICAL ISSUE: The error returned by os.Remove is ignored.
-	// SonarQube Rule: "Return values should not be ignored when they contain status information"
-	_ = os.Remove(path)
-}
