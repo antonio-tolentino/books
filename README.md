@@ -1,8 +1,9 @@
 # Books API
 
-## Gerarate Code coverage
+
+## Gerarate Code coverage and html report
 ```bash
-ginkgo -r -cover -coverprofile=coverage.out ./...
+go test -v -coverprofile=coverage.out ./...
 go tool cover -html=coverage.out -o coverage.html
 ```
 
