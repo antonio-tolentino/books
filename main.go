@@ -3,7 +3,6 @@ package main
 import (
 	"books/storage"
 	"books/web"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -14,10 +13,8 @@ import (
 // It then starts the web server using slog.
 func main() {
 
-	// BUG: unreachable code
-	if false {
-		fmt.Println("This is unreachable")
-	}
+	// CODE SMELL: Cognitive complexity and unused variables
+	var unusedVar string = "I am not used"
 
 	// Init Logger
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
