@@ -32,7 +32,6 @@ jobs:
       - name: Run tests
         run: |
           go test -v -coverprofile=coverage.out ./...
-        #go test -v -json ./... > report.json
 
 
       - name: SonarQube Scan
@@ -42,6 +41,13 @@ jobs:
           -Dsonar.projectVersion=${{ steps.meta.outputs.SHORT_SHA }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: SonarQube Quality Gate check
+        uses: sonarsource/sonarqube-quality-gate-action@cf038b0e0cdecfa9e56c198bbb7d21d751d62c3b #v1.2.0
+        with:
+          pollingTimeoutSec: 600
+        env:
+         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
 
   build-and-push:
