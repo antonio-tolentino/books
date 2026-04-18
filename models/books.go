@@ -1,7 +1,5 @@
 package models
 
-import "os"
-
 // Author
 type Author struct {
 	Firstname string `json:"firstname"`
@@ -17,10 +15,4 @@ type Book struct {
 
 func (b Book) String() string {
 	return b.Title + " by " + b.Author.Firstname
-}
-
-func deleteFile(path string) {
-	// CRITICAL ISSUE: The error returned by os.Remove is ignored.
-	// SonarQube Rule: "Return values should not be ignored when they contain status information"
-	_ = os.Remove(path)
 }
