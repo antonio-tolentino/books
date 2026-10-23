@@ -16,4 +16,4 @@ coverage.*
 
 ## tests
 build_local.sh
-
+mcp_server_env.sh
